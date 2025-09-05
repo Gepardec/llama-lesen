@@ -1,0 +1,75 @@
+# Database Configuration
+quarkus:
+  datasource:
+    db-kind: postgresql
+    username: ${DB_USER:lerne-lama}
+    password: ${DB_PASSWORD}
+    jdbc:
+      url: ${DB_URL:jdbc:postgresql://localhost:5432/lerne_lama_db}
+  
+  hibernate-orm:
+    database:
+      generation: drop-and-create
+    log:
+      sql: false
+
+  # REST Client Configuration for Vertex AI
+  rest-client:
+    vertex-ai:
+      url: https://us-east5-aiplatform.googleapis.com
+
+# Vertex AI Configuration
+vertex:
+  ai:
+    project-id: ${VERTEX_AI_PROJECT_ID:your-project-id}
+    location: ${VERTEX_AI_LOCATION:us-central1}
+    model: ${VERTEX_AI_MODEL:gemini-1.5-pro-vision-001}
+    access-token: ${VERTEX_AI_ACCESS_TOKEN}
+    credentials:
+      path: ${VERTEX_AI_CREDENTIALS_PATH}
+
+# LLM Prompts Configuration
+llm:
+  prompt:
+    system: >
+      Sie sind ein KI-Assistent, der darauf spezialisiert ist, handschriftlich ausgefüllte 
+      Vorfallserhebungsbögen zu analysieren und strukturierte Daten zu extrahieren. 
+      Ihre Aufgabe ist es, alle lesbaren handschriftlichen Informationen zu identifizieren 
+      und in einem strukturierten JSON-Format zurückzugeben.
+      
+      Achten Sie besonders auf:
+      - Personendaten (Namen, Adressen, Telefonnummern)
+      - Datum und Uhrzeitangaben
+      - Beschreibungen von Vorfällen
+      - Unterschriften und Initialen
+      - Kontrollkästchen und Auswahloptionen
+      
+      Wenn Text unleserlich ist, kennzeichnen Sie dies mit "UNLESERLICH".
+      Wenn Felder leer sind, verwenden Sie null-Werte.
+    
+    user: >
+      Analysieren Sie dieses handschriftlich ausgefüllte Formular und extrahieren Sie 
+      alle lesbaren Informationen. Geben Sie das Ergebnis als strukturiertes JSON zurück.
+      Verwenden Sie deutsche Feldnamen, die den Inhalt beschreiben.
+
+# Test Configuration
+"%test":
+  quarkus:
+    datasource:
+      db-kind: h2
+      username: sa
+      password: 
+      jdbc:
+        url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1
+    hibernate-orm:
+      database:
+        generation: drop-and-create
+
+# Development Configuration  
+"%dev":
+  quarkus:
+    hibernate-orm:
+      log:
+        sql: true
+    log:
+      level: DEBUG
