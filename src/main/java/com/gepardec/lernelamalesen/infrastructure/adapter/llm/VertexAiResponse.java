@@ -4,19 +4,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 public record VertexAiResponse(
-    @JsonProperty("candidates") List<Candidate> candidates
+    @JsonProperty("choices") List<Choice> choices
 ) {
-    public record Candidate(
-        @JsonProperty("content") Content content,
-        @JsonProperty("finishReason") String finishReason
+    public record Choice(
+        @JsonProperty("message") Message message,
+        @JsonProperty("finish_reason") String finishReason
     ) {}
     
-    public record Content(
+    public record Message(
         @JsonProperty("role") String role,
-        @JsonProperty("parts") List<Part> parts
-    ) {}
-    
-    public record Part(
-        @JsonProperty("text") String text
+        @JsonProperty("content") String content
     ) {}
 }

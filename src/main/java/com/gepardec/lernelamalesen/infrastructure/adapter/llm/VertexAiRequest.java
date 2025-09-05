@@ -4,51 +4,44 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 public record VertexAiRequest(
-    @JsonProperty("contents") List<Content> contents,
-    @JsonProperty("generationConfig") GenerationConfig generationConfig
+    @JsonProperty("model") String model,
+    @JsonProperty("messages") List<Message> messages
 ) {
-    public VertexAiRequest(String systemPrompt, String userPrompt, String base64Image, String mimeType) {
+    public VertexAiRequest(String model, String systemPrompt, String userPrompt, String base64Image, String mimeType) {
         this(
+            model,
             List.of(
-                new Content(
+                new Message(
                     "user",
                     List.of(
-                        new Part(systemPrompt + "\n\n" + userPrompt),
-                        new Part(new InlineData(mimeType, base64Image))
+                        new Content("text", systemPrompt + "\n\n" + userPrompt),
+                        new Content("image_url", new ImageUrl("data:" + mimeType + ";base64," + base64Image))
                     )
                 )
-            ),
-            new GenerationConfig(0.7, 1024, 0.8, 40)
+            )
         );
     }
     
-    public record Content(
+    public record Message(
         @JsonProperty("role") String role,
-        @JsonProperty("parts") List<Part> parts
+        @JsonProperty("content") List<Content> content
     ) {}
     
-    public record Part(
+    public record Content(
+        @JsonProperty("type") String type,
         @JsonProperty("text") String text,
-        @JsonProperty("inlineData") InlineData inlineData
+        @JsonProperty("image_url") ImageUrl imageUrl
     ) {
-        public Part(String text) {
-            this(text, null);
+        public Content(String type, String text) {
+            this(type, text, null);
         }
         
-        public Part(InlineData inlineData) {
-            this(null, inlineData);
+        public Content(String type, ImageUrl imageUrl) {
+            this(type, null, imageUrl);
         }
     }
     
-    public record InlineData(
-        @JsonProperty("mimeType") String mimeType,
-        @JsonProperty("data") String data
-    ) {}
-    
-    public record GenerationConfig(
-        @JsonProperty("temperature") double temperature,
-        @JsonProperty("maxOutputTokens") int maxOutputTokens,
-        @JsonProperty("topP") double topP,
-        @JsonProperty("topK") int topK
+    public record ImageUrl(
+        @JsonProperty("url") String url
     ) {}
 }

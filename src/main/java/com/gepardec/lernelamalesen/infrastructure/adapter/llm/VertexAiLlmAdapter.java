@@ -30,6 +30,9 @@ public class VertexAiLlmAdapter implements LlmPort {
     
     @ConfigProperty(name = "vertex.ai.location", defaultValue = "us-central1")
     String location;
+
+    @ConfigProperty(name = "vertex.ai.publisher", defaultValue = "google")
+    String publisher;
     
     @ConfigProperty(name = "vertex.ai.model", defaultValue = "gemini-1.5-pro-vision-001")
     String model;
@@ -38,25 +41,34 @@ public class VertexAiLlmAdapter implements LlmPort {
     public LlmResponse analyzeDocument(LlmRequest request) {
         try {
             LOG.infof("Sending request to Vertex AI for image: %s", request.image().filename());
+            LOG.infof("Project ID: %s, Location: %s, Model: %s", projectId, location, model);
             
             String base64Image = Base64.getEncoder().encodeToString(request.image().imageData());
+            LOG.debugf("Base64 image length: %d characters", base64Image.length());
             
             VertexAiRequest vertexRequest = new VertexAiRequest(
+                publisher + "/" + model,
                 request.systemPrompt(),
                 request.userPrompt(),
                 base64Image,
                 request.image().mimeType()
             );
             
+            // Log the request structure (without the full base64 image)
+            LOG.debugf("Request URL: /v1beta1/projects/%s/locations/%s/endpoints/openapi/chat/completions",
+                      projectId, location, model);
+            LOG.debugf("Image MIME type: %s", request.image().mimeType());
+            LOG.debugf("System prompt length: %d", request.systemPrompt().length());
+            LOG.debugf("User prompt length: %d", request.userPrompt().length());
+            
             VertexAiResponse response = vertexAiClient.generateContent(
                 projectId, 
                 location, 
-                model, 
                 vertexRequest
             );
             
-            if (response.candidates() != null && !response.candidates().isEmpty()) {
-                String rawResponse = response.candidates().get(0).content().parts().get(0).text();
+            if (response.choices() != null && !response.choices().isEmpty()) {
+                String rawResponse = response.choices().get(0).message().content();
                 
                 try {
                     @SuppressWarnings("unchecked")
@@ -70,6 +82,18 @@ public class VertexAiLlmAdapter implements LlmPort {
                 return LlmResponse.failure("No response from Vertex AI", "");
             }
             
+        } catch (jakarta.ws.rs.WebApplicationException e) {
+            String responseBody = "";
+            try {
+                if (e.getResponse() != null) {
+                    responseBody = e.getResponse().readEntity(String.class);
+                    LOG.errorf("Vertex AI HTTP %d error response: %s", e.getResponse().getStatus(), responseBody);
+                }
+            } catch (Exception readException) {
+                LOG.warnf("Could not read error response body: %s", readException.getMessage());
+            }
+            LOG.errorf(e, "Error calling Vertex AI: HTTP %d", e.getResponse() != null ? e.getResponse().getStatus() : -1);
+            return LlmResponse.failure("Vertex AI HTTP error: " + e.getMessage() + " - " + responseBody, "");
         } catch (Exception e) {
             LOG.errorf(e, "Error calling Vertex AI");
             return LlmResponse.failure("Vertex AI error: " + e.getMessage(), "");

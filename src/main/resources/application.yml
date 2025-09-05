@@ -17,6 +17,13 @@ quarkus:
   rest-client:
     vertex-ai:
       url: https://us-east5-aiplatform.googleapis.com
+  
+  # Enable REST client logging
+  log:
+    level:
+      "io.quarkus.rest.client": DEBUG
+      "org.jboss.resteasy.reactive.client": DEBUG
+      "com.gepardec.lernelamalesen.infrastructure.adapter.llm": DEBUG
 
 # Vertex AI Configuration
 vertex:
@@ -24,6 +31,7 @@ vertex:
     project-id: ${VERTEX_AI_PROJECT_ID:your-project-id}
     location: ${VERTEX_AI_LOCATION:us-central1}
     model: ${VERTEX_AI_MODEL:gemini-1.5-pro-vision-001}
+    publisher: ${VERTEX_AI_PUBLISHER:google}
     access-token: ${VERTEX_AI_ACCESS_TOKEN}
     credentials:
       path: ${VERTEX_AI_CREDENTIALS_PATH}
