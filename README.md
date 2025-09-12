@@ -25,9 +25,10 @@ export DB_URL="jdbc:postgresql://localhost:5432/lerne_lama_db"
 export DB_USER="lerne-lama"
 export DB_PASSWORD="your-secure-password"
 export VERTEX_AI_PROJECT_ID="your-gcp-project"
-export VERTEX_AI_LOCATION="us-central1"
-export VERTEX_AI_MODEL="gemini-1.5-pro-vision-001"
+export VERTEX_AI_LOCATION="us-east5"
+export VERTEX_AI_MODEL="llama-4-scout-17b-16e-instruct-maas"
 export VERTEX_AI_CREDENTIALS_PATH="/path/to/service-account-key.json"
+export VERTEX_AI_PUBLISHER="meta"
 ```
 
 **Important**: Never commit service account keys or credentials to version control.
