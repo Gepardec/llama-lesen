@@ -9,7 +9,7 @@ quarkus:
   
   hibernate-orm:
     database:
-      generation: drop-and-create
+      generation: none
     log:
       sql: false
 
@@ -186,6 +186,8 @@ llm:
 "%dev":
   quarkus:
     hibernate-orm:
+      database:
+        generation: update
       log:
         sql: false
     log:
