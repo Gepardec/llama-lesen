@@ -7,13 +7,13 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 @RegisterRestClient(configKey = "vertex-ai")
 @RegisterProvider(VertexAiAuthenticationProvider.class)
-@Path("/v1beta1/projects/{projectId}/locations/{location}/endpoints/openapi/chat/completions")
+// @RegisterProvider(RequestLoggingFilter.class)
+@Path("/v1/projects/{projectId}/locations/{location}/endpoints/openapi/chat/completions")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public interface VertexAiClient {
     
     @POST
-    @Path("")
     VertexAiResponse generateContent(
         @PathParam("projectId") String projectId,
         @PathParam("location") String location,

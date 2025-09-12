@@ -28,8 +28,22 @@ public class FormDataRepositoryAdapter implements FormDataRepositoryPort {
     public FormData save(FormData formData) {
         try {
             FormDataEntity entity = toEntity(formData);
-            repository.persistAndFlush(entity);
-            LOG.infof("Saved form data with ID: %s", formData.id());
+            
+            // Check if entity already exists, if so update it, otherwise persist
+            Optional<FormDataEntity> existing = repository.findByIdOptional(formData.id());
+            if (existing.isPresent()) {
+                FormDataEntity existingEntity = existing.get();
+                existingEntity.originalFilename = entity.originalFilename;
+                existingEntity.extractedFields = entity.extractedFields;
+                existingEntity.status = entity.status;
+                existingEntity.processedAt = entity.processedAt;
+                existingEntity.errorMessage = entity.errorMessage;
+                repository.flush();
+                LOG.infof("Updated existing form data with ID: %s", formData.id());
+            } else {
+                repository.persistAndFlush(entity);
+                LOG.infof("Saved new form data with ID: %s", formData.id());
+            }
             return formData;
         } catch (Exception e) {
             LOG.errorf(e, "Error saving form data: %s", formData.id());

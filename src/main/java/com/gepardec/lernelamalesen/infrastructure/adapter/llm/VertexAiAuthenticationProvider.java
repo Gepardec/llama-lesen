@@ -10,46 +10,45 @@ import org.jboss.logging.Logger;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
 
 @ApplicationScoped
 public class VertexAiAuthenticationProvider implements ClientRequestFilter {
-    
     private static final Logger LOG = Logger.getLogger(VertexAiAuthenticationProvider.class);
-    
+
     @ConfigProperty(name = "vertex.ai.credentials.path", defaultValue = "")
     String credentialsPath;
-    
+
+    @ConfigProperty(name = "vertex.ai.billing.project", defaultValue = "")
+    String billingProject; // optional, only if SA != billing project
+
     @Override
     public void filter(ClientRequestContext requestContext) throws IOException {
         try {
-            GoogleCredentials credentials;
-            
-            if (credentialsPath != null && !credentialsPath.trim().isEmpty()) {
-                // Use service account key file
-                credentials = GoogleCredentials.fromStream(new FileInputStream(credentialsPath));
+            GoogleCredentials creds = (credentialsPath != null && !credentialsPath.trim().isEmpty())
+                    ? GoogleCredentials.fromStream(new FileInputStream(credentialsPath))
+                    : GoogleCredentials.getApplicationDefault();
+
+            // Vertex AI only needs cloud-platform
+            creds = creds.createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
+
+            // Ensure we actually have a token on first use
+            if (creds.getAccessToken() == null) {
+                creds.refresh();
             } else {
-                // Use Application Default Credentials (for Google Cloud environments)
-                credentials = GoogleCredentials.getApplicationDefault();
+                creds.refreshIfExpired();
             }
-            
-            credentials = credentials.createScoped(java.util.List.of(
-                "https://www.googleapis.com/auth/cloud-platform",
-                "https://www.googleapis.com/auth/generative-language"
-            ));
-            credentials.refreshIfExpired();
-            AccessToken token = credentials.getAccessToken();
-            String accessToken = token.getTokenValue();
-            if (accessToken != null && !accessToken.trim().isEmpty()) {
-                requestContext.getHeaders().add("Authorization", "Bearer " + accessToken);
-                LOG.debug("Added Bearer token to Vertex AI request");
-            } else {
-                LOG.warn("No access token configured for Vertex AI");
+
+            AccessToken token = creds.getAccessToken();
+            if (token == null || token.getTokenValue() == null || token.getTokenValue().isBlank()) {
+                throw new IOException("No OAuth access token available for Vertex AI");
             }
+
+            requestContext.getHeaders().putSingle("Authorization", "Bearer " + token.getTokenValue());
+            requestContext.getHeaders().putSingle("Content-Type", "application/json");
         } catch (Exception e) {
-            LOG.errorf("Failed to load Google credentials from path: %s", credentialsPath);
+            LOG.errorf(e, "Failed to obtain Google OAuth token (credentialsPath=%s)", credentialsPath);
             throw new IOException("Authentication failed", e);
         }
-        
-        requestContext.getHeaders().add("Content-Type", "application/json");
     }
 }

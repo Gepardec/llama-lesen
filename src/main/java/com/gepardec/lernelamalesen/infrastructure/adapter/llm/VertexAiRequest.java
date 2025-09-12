@@ -5,7 +5,8 @@ import java.util.List;
 
 public record VertexAiRequest(
     @JsonProperty("model") String model,
-    @JsonProperty("messages") List<Message> messages
+    @JsonProperty("messages") List<Message> messages,
+    @JsonProperty("response_format") ResponseFormat responseFormat
 ) {
     public VertexAiRequest(String model, String systemPrompt, String userPrompt, String base64Image, String mimeType) {
         this(
@@ -18,7 +19,8 @@ public record VertexAiRequest(
                         new Content("image_url", new ImageUrl("data:" + mimeType + ";base64," + base64Image))
                     )
                 )
-            )
+            ),
+            new ResponseFormat("json_object")
         );
     }
     
@@ -43,5 +45,9 @@ public record VertexAiRequest(
     
     public record ImageUrl(
         @JsonProperty("url") String url
+    ) {}
+    
+    public record ResponseFormat(
+        @JsonProperty("type") String type
     ) {}
 }

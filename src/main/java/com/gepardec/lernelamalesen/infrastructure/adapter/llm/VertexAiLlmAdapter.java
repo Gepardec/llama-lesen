@@ -55,11 +55,20 @@ public class VertexAiLlmAdapter implements LlmPort {
             );
             
             // Log the request structure (without the full base64 image)
-            LOG.debugf("Request URL: /v1beta1/projects/%s/locations/%s/endpoints/openapi/chat/completions",
-                      projectId, location, model);
-            LOG.debugf("Image MIME type: %s", request.image().mimeType());
-            LOG.debugf("System prompt length: %d", request.systemPrompt().length());
-            LOG.debugf("User prompt length: %d", request.userPrompt().length());
+            LOG.infof("Request URL: /v1/projects/%s/locations/%s/endpoints/openapi/chat/completions", projectId, location);
+            LOG.infof("Full model name: %s", publisher + "/" + model);
+            LOG.infof("Image MIME type: %s", request.image().mimeType());
+            LOG.infof("System prompt length: %d", request.systemPrompt().length());
+            LOG.infof("User prompt length: %d", request.userPrompt().length());
+            
+            try {
+                // Log actual JSON that will be sent
+                String jsonRequest = objectMapper.writeValueAsString(vertexRequest);
+                LOG.infof("Request JSON (first 1000 chars): %s", 
+                    jsonRequest.length() > 1000 ? jsonRequest.substring(0, 1000) + "..." : jsonRequest);
+            } catch (Exception e) {
+                LOG.warnf("Could not serialize request to JSON: %s", e.getMessage());
+            }
             
             VertexAiResponse response = vertexAiClient.generateContent(
                 projectId, 

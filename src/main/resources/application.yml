@@ -17,13 +17,25 @@ quarkus:
   rest-client:
     vertex-ai:
       url: https://us-east5-aiplatform.googleapis.com
+      # logging:
+      #   scope: request-response
+      #   body-limit: 1000000
   
-  # Enable REST client logging
-  log:
-    level:
-      "io.quarkus.rest.client": DEBUG
-      "org.jboss.resteasy.reactive.client": DEBUG
-      "com.gepardec.lernelamalesen.infrastructure.adapter.llm": DEBUG
+  # Jackson configuration
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    charset: UTF-8
+  
+  # Enable REST client logging (commented out for normal operation)
+  # log:
+  #   level:
+  #     "io.quarkus.rest.client": DEBUG
+  #     "org.jboss.resteasy.reactive.client": DEBUG
+  #     "com.gepardec.lernelamalesen.infrastructure.adapter.llm": DEBUG
+  #     "org.apache.http.wire": DEBUG
+  #     "org.apache.http.headers": DEBUG
+  #     "org.jboss.logging": DEBUG
 
 # Vertex AI Configuration
 vertex:
@@ -33,6 +45,8 @@ vertex:
     model: ${VERTEX_AI_MODEL:gemini-1.5-pro-vision-001}
     publisher: ${VERTEX_AI_PUBLISHER:google}
     access-token: ${VERTEX_AI_ACCESS_TOKEN}
+    billing:
+      project: ${VERTEX_AI_PROJECT_ID:your-project-id}
     credentials:
       path: ${VERTEX_AI_CREDENTIALS_PATH}
 
@@ -40,25 +54,120 @@ vertex:
 llm:
   prompt:
     system: >
-      Sie sind ein KI-Assistent, der darauf spezialisiert ist, handschriftlich ausgefüllte 
-      Vorfallserhebungsbögen zu analysieren und strukturierte Daten zu extrahieren. 
-      Ihre Aufgabe ist es, alle lesbaren handschriftlichen Informationen zu identifizieren 
-      und in einem strukturierten JSON-Format zurückzugeben.
-      
-      Achten Sie besonders auf:
-      - Personendaten (Namen, Adressen, Telefonnummern)
-      - Datum und Uhrzeitangaben
-      - Beschreibungen von Vorfällen
-      - Unterschriften und Initialen
-      - Kontrollkästchen und Auswahloptionen
-      
-      Wenn Text unleserlich ist, kennzeichnen Sie dies mit "UNLESERLICH".
-      Wenn Felder leer sind, verwenden Sie null-Werte.
+      Analyze the document scan
+      Detect all form fields (Frage 1 through Frage 9) via OCR and map them into the JSON schema exactly as specified.  
+
+      {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "SchadensmeldungFormular",
+        "type": "object",
+        "properties": {
+          "frage1": {
+            "type": "object",
+            "properties": {
+              "frage1_datumUhrzeit":               { "type": "string" },
+              "frage1_ortDesEreignisses":          { "type": "string" },
+              "frage1_keinKonkretesEreignis":      { "type": "string" },
+              "frage1_artDerErkrankungBeschwerden": { "type": "string" }
+            },
+            "required": ["frage1_keinKonkretesEreignis"]
+          },
+          "frage2": {
+            "type": "object",
+            "properties": {
+              "frage2_zusammenhangMitFruehererVerletzung": { "type": "string" },
+              "frage2_datumFruehereVerletzung":            { "type": "string" }
+            },
+            "required": ["frage2_zusammenhangMitFruehererVerletzung"]
+          },
+          "frage3": {
+            "type": "object",
+            "properties": {
+              "frage3_vorfallsort_beruflicheTaetigkeit":   { "type": "string" },
+              "frage3_vorfallsort_arbeitsweg":             { "type": "string" },
+              "frage3_vorfallsort_berufskrankheit":        { "type": "string" },
+              "frage3_vorfallsort_schulveranstaltung":     { "type": "string" },
+              "frage3_vorfallsort_freizeit":               { "type": "string" },
+              "frage3_vorfallsort_sonstige":               { "type": "string" },
+              "frage3_vorfallsort_sonstige_text":          { "type": "string" },
+              "frage3_vorfallsart_verkehrsunfall":         { "type": "string" },
+              "frage3_vorfallsart_raufhandel":             { "type": "string" },
+              "frage3_vorfallsart_behandlungsfehler":      { "type": "string" },
+              "frage3_vorfallsart_sportunfall":            { "type": "string" },
+              "frage3_vorfallsart_tierbiss":               { "type": "string" },
+              "frage3_vorfallsart_glatteissturz":          { "type": "string" },
+              "frage3_vorfallsart_defektesProdukt":        { "type": "string" },
+              "frage3_vorfallsart_stromBlitz":             { "type": "string" },
+              "frage3_vorfallsart_sonstigerVorfall":       { "type": "string" },
+              "frage3_vorfallsart_sonstigerVorfall_text":  { "type": "string" }
+            }
+          },
+          "frage4": {
+            "type": "object",
+            "properties": {
+              "frage4_fremdesVerschulden": { "type": "string" },
+              "frage4_schuldiger":         { "type": "string" }
+            },
+            "required": ["frage4_fremdesVerschulden"]
+          },
+          "frage5": {
+            "type": "object",
+            "properties": {
+              "frage5_schilderungDesEreignisses": { "type": "string" }
+            }
+          },
+          "frage6": {
+            "type": "object",
+            "properties": {
+              "frage6_raufhandelOderAuseinandersetzung": { "type": "string" }
+            }
+          },
+          "frage7": {
+            "type": "object",
+            "properties": {
+              "frage7_konsumVonAlkoholSuchtgiftMedikamenten": { "type": "string" },
+              "frage7_artUndMengeDesKonsums":                  { "type": "string" },
+              "frage7_zeitraumDesKonsums":                     { "type": "string" }
+            },
+            "required": ["frage7_konsumVonAlkoholSuchtgiftMedikamenten"]
+          },
+          "frage8": {
+            "type": "object",
+            "properties": {
+              "frage8_polizeiAufnahme":       { "type": "string" },
+              "frage8_polizeidienststelle":   { "type": "string" },
+              "frage8_aktenzahl":             { "type": "string" }
+            },
+            "required": ["frage8_polizeiAufnahme"]
+          },
+          "frage9": {
+            "type": "object",
+            "properties": {
+              "frage9_gerichtlichesVerfahrenAnhaengig":    { "type": "string" },
+              "frage9_gerichtOderStaatsanwaltschaft":       { "type": "string" },
+              "frage9_aktenzahl":                          { "type": "string" }
+            },
+            "required": ["frage9_gerichtlichesVerfahrenAnhaengig"]
+          },
+        },
+        "required": [
+          "frage1","frage2","frage3","frage4","frage5","frage6","frage7",
+          "frage8","frage9"
+        ]
+      }
+
+      Return the result as a valid JSON object with the following requirements:
+
+      - Every key must match the schema field names exactly.  
+      - Represent each checkbox as string "true" if it is set, empty string if not. If there is two checkboxes "Ja" und "Nein", like in a question 6, leave it empty if none of them are set. Otherwise use "true" or "false"
+      - Represent all other fields (dates, times, free text, numbers, names, etc.) as strings—unreadable or empty fields should be returned as `""`.  
+      - Do not add any text outside of the pure JSON output.  
+      - Do not swap or reorder fields; assign them in the same sequence as they appear in the image.
+      - If there a typo in a german word you must fix the typo using given context.
+      - The document is in GERMAN!
     
     user: >
-      Analysieren Sie dieses handschriftlich ausgefüllte Formular und extrahieren Sie 
-      alle lesbaren Informationen. Geben Sie das Ergebnis als strukturiertes JSON zurück.
-      Verwenden Sie deutsche Feldnamen, die den Inhalt beschreiben.
+      Perform OCR on the following document scan and extract all form fields (Frage 1 through Frage 9). Return the result as a valid JSON object according to the specified schema and requirements.
 
 # Test Configuration
 "%test":
@@ -78,6 +187,6 @@ llm:
   quarkus:
     hibernate-orm:
       log:
-        sql: true
+        sql: false
     log:
-      level: DEBUG
+      level: INFO
