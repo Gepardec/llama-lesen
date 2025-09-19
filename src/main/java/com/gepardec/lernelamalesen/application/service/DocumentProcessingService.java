@@ -1,6 +1,7 @@
 package com.gepardec.lernelamalesen.application.service;
 
 import com.gepardec.lernelamalesen.domain.model.DocumentImage;
+import com.gepardec.lernelamalesen.domain.model.ExampleImage;
 import com.gepardec.lernelamalesen.domain.model.FormData;
 import com.gepardec.lernelamalesen.domain.model.LlmRequest;
 import com.gepardec.lernelamalesen.domain.model.LlmResponse;
@@ -32,6 +33,10 @@ public class DocumentProcessingService {
     PromptService promptService;
     
     public FormData processDocument(InputStream pdfStream, String filename) {
+        return processDocument(pdfStream, filename, List.of());
+    }
+    
+    public FormData processDocument(InputStream pdfStream, String filename, List<ExampleImage> exampleImages) {
         FormData formData = FormData.create(filename);
         formData = repository.save(formData.withStatus(FormData.ProcessingStatus.PROCESSING));
         
@@ -50,7 +55,8 @@ public class DocumentProcessingService {
             LlmRequest request = new LlmRequest(
                 firstImage,
                 promptService.getSystemPrompt(),
-                promptService.getUserPrompt()
+                promptService.getUserPrompt(),
+                exampleImages
             );
             
             LlmResponse response = llmService.analyzeDocument(request);

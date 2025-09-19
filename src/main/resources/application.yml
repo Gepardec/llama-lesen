@@ -180,6 +180,7 @@ llm:
       - Try to not change the text. However, if the text is not good readable, and it results in meaningless text, you may correct it to the most probable words, so that it makes sense in the given context. For example "Kren tipus reben Praterstern" may be corrected to "Kreuzung neben Praterstern", if the rest of the text suggests that it is a location.
       - If there are text corrections, like strikethroughs or overwrites, use the final text as it is written last.
       - If some question with YES/NO checkboxes has the answer "Nein", but there are some fields "Wenn ja" filled that should not be filled in this case, do not ignore them, but return them as they are written in the form. But you are not allowed to change the answer "Nein" to "Ja" in this case.
+      - DO NOT USE EXAMPLES Example 1 to 6 in the output. They are only for your understanding of the required format and how people may fill the form!!!
       - The document is in GERMAN!
     
     user: >

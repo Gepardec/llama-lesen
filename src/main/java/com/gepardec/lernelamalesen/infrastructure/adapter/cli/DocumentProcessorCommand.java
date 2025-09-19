@@ -1,6 +1,8 @@
 package com.gepardec.lernelamalesen.infrastructure.adapter.cli;
 
 import com.gepardec.lernelamalesen.application.service.DocumentProcessingService;
+import com.gepardec.lernelamalesen.application.service.PromptService;
+import com.gepardec.lernelamalesen.domain.model.ExampleImage;
 import com.gepardec.lernelamalesen.domain.model.FormData;
 import io.quarkus.picocli.runtime.annotations.TopCommand;
 import jakarta.inject.Inject;
@@ -9,6 +11,7 @@ import picocli.CommandLine;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.List;
 
 @TopCommand
 @CommandLine.Command(
@@ -32,8 +35,17 @@ public class DocumentProcessorCommand implements Runnable {
     )
     boolean verbose;
     
+    @CommandLine.Option(
+        names = {"-e", "--examples"}, 
+        description = "Path to directory containing example images (JPG/PNG) and descriptions.prop file"
+    )
+    File examplesPath;
+    
     @Inject
     DocumentProcessingService documentProcessingService;
+    
+    @Inject
+    PromptService promptService;
     
     @Override
     public void run() {
@@ -52,9 +64,22 @@ public class DocumentProcessorCommand implements Runnable {
                 System.out.println("Processing file: " + pdfFile.getAbsolutePath());
             }
             
+            // Load example images if path is provided
+            List<ExampleImage> exampleImages = List.of();
+            if (examplesPath != null) {
+                if (verbose) {
+                    System.out.println("Loading example images from: " + examplesPath.getAbsolutePath());
+                }
+                exampleImages = promptService.loadExampleImages(examplesPath);
+                if (verbose) {
+                    System.out.println("Loaded " + exampleImages.size() + " example images");
+                }
+            }
+            
             FormData result = documentProcessingService.processDocument(
                 fileStream, 
-                pdfFile.getName()
+                pdfFile.getName(),
+                exampleImages
             );
             
             printResult(result);
