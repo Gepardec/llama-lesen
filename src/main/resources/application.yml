@@ -56,8 +56,40 @@ vertex:
 llm:
   prompt:
     system: >
-      You are the OCR assistant for a form called "Vorfallserhebungbogen". Your task is to extract all form fields from a scanned document (Frage 1 through Frage 9) image using OCR and map them into a specified JSON schema.
+      You are an OCR system for "Vorfallserhebungsbogen" forms from Österreichische Gesundheitskasse.
 
+      CRITICAL CHECKBOX RULES:
+      - ANY visible mark in or near a checkbox means "true" (checkmark, cross, dot, shade, circle, scribble)
+      - Light or faint marks still count as "true"
+      - Empty checkbox means ""
+      - Strikethrough or crossed-out mark means ""
+      - For Ja/Nein pairs: Ja marked = "true", Nein marked = "false", neither = ""
+
+      CRITICAL TEXT RULES:
+      - This is Austrian German medical context
+      - Fix obvious typos using context
+      - Common locations: Wien, Graz, Linz, Salzburg, Innsbruck, Praterstern, Hauptstraße, Ringstraße
+      - Medical terms expected: Sturz, Schmerzen, Unfall, Prellung, Kreislauf, Schwindel
+      - Dates: DD.MM.YYYY or D.M.YY format or free format like "heute", "gestern", "22. Juni"
+      - Time periods must be German: "2 Stunden", "1 Tag", "30 Minuten", not English
+      - If handwriting unclear, guess based on Austrian context
+      - Use final text after strikethroughs/corrections
+      - Keep field sequence as it appears in the form
+
+      REFERENCE IMAGES:
+      - Image 1 shows how checkboxes can be marked
+      - Image 2 shows common handwritten terms in these forms
+      - Main image is the form to extract from
+
+      SPECIFIC FIELD RULES:
+      - frage1_ortDesEreignisses: Expect Austrian location
+      - frage3: Single checkboxes, each can be "true" or ""
+      - frage4, 6, 7, 8, 9: Ja/Nein pairs use "true"/"false"/""
+      - frage7_zeitraumDesKonsums: MUST be duration like "2 Stunden", "1 Tag"
+      - frage8_polizeidienststelle: Expect "Wien", "Polizeiinspektion [City]" or "PI [City]"
+      - If Ja/Nein is "false" but "Wenn ja" fields are filled, still extract those fields as written
+
+      JSON SCHEMA:
       {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "title": "SchadensmeldungFormular",
@@ -66,125 +98,90 @@ llm:
           "frage1": {
             "type": "object",
             "properties": {
-              "frage1_datumUhrzeit":                { "type": "string", "description": "This field represents a date and time in the free format" },
-              "frage1_ortDesEreignisses":           { "type": "string", "description": "This field represents a location, e.g. 'Wien', 'Praterstern', 'Kreuzung neben Praterstern' or concrete address e.g. 'Göthestraße 51, 4020 Linz" },
-              "frage1_keinKonkretesEreignis":       { "type": "string", description": "This field is a single checkbox. Use string "true" if it is set, empty string if not" },
-              "frage1_artDerErkrankungBeschwerden": { "type": "string", "description": "This field represents a free text description of the type of illness or complaints, e.g. 'Rückenbeschwerden', 'Kopfschmerzen', 'Hautausschlag'" }
-            },
-            "required": ["frage1_datumUhrzeit", "frage1_ortDesEreignisses"]
+              "frage1_datumUhrzeit": {"type": "string"},
+              "frage1_ortDesEreignisses": {"type": "string"},
+              "frage1_keinKonkretesEreignis": {"type": "string"},
+              "frage1_artDerErkrankungBeschwerden": {"type": "string"}
+            }
           },
           "frage2": {
             "type": "object",
             "properties": {
-              "frage2_datumFruehereVerletzung": { "type": "string", "description": "This field represents a date in the free format" },
-            },
-            "required": ["frage2_zusammenhangMitFruehererVerletzung"]
+              "frage2_datumFruehereVerletzung": {"type": "string"}
+            }
           },
           "frage3": {
             "type": "object",
             "properties": {
-              "frage3_vorfallsort_beruflicheTaetigkeit":   { "type": "string", description": "This field is a single checkbox. Use string "true" if it is set, empty string if not"},
-              "frage3_vorfallsort_arbeitsweg":             { "type": "string", description": "This field is a single checkbox. Use string "true" if it is set, empty string if not"},
-              "frage3_vorfallsort_berufskrankheit":        { "type": "string", description": "This field is a single checkbox. Use string "true" if it is set, empty string if not"},
-              "frage3_vorfallsort_schulveranstaltung":     { "type": "string", description": "This field is a single checkbox. Use string "true" if it is set, empty string if not"},
-              "frage3_vorfallsort_freizeit":               { "type": "string", description": "This field is a single checkbox. Use string "true" if it is set, empty string if not"},
-              "frage3_vorfallsort_sonstige":               { "type": "string", description": "This field is a single checkbox. Use string "true" if it is set, empty string if not"},
-              "frage3_vorfallsort_sonstige_text":          { "type": "string", description": "This field is a free text, that must be filled, if frage3_vorfallsort_sonstige is set to 'true'" },
-              "frage3_vorfallsart_verkehrsunfall":         { "type": "string", description": "This field is a single checkbox. Use string "true" if it is set, empty string if not"},
-              "frage3_vorfallsart_raufhandel":             { "type": "string", description": "This field is a single checkbox. Use string "true" if it is set, empty string if not"},
-              "frage3_vorfallsart_arztlicherBehandlungsfehler":      { "type": "string", description": "This field is a single checkbox. Use string "true" if it is set, empty string if not" },
-              "frage3_vorfallsart_sportunfall":            { "type": "string", description": "This field is a single checkbox. Use string "true" if it is set, empty string if not"},
-              "frage3_vorfallsart_verletzungDurchEinTier": { "type": "string", description": "This field is a single checkbox. Use string "true" if it is set, empty string if not"},
-              "frage3_vorfallsart_glatteissturz":          { "type": "string", description": "This field is a single checkbox. Use string "true" if it is set, empty string if not"},
-              "frage3_vorfallsart_gebrauchEinesFehlerhaftenProdukts":        { "type": "string", description": "This field is a single checkbox. Use string "true" if it is set, empty string if not"},
-              "frage3_vorfallsart_stromBlitz":             { "type": "string", description": "This field is a single checkbox. Use string "true" if it is set, empty string if not"},
-              "frage3_vorfallsart_sonstigerVorfall":       { "type": "string", description": "This field is a single checkbox. Use string "true" if it is set, empty string if not"},
-              "frage3_vorfallsart_sonstigerVorfall_text":  { "type": "string", description": "This field is a free text, that must be filled, if frage3_vorfallsart_sonstigerVorfall is set to 'true'" }
+              "frage3_vorfallsort_beruflicheTaetigkeit": {"type": "string"},
+              "frage3_vorfallsort_arbeitsweg": {"type": "string"},
+              "frage3_vorfallsort_berufskrankheit": {"type": "string"},
+              "frage3_vorfallsort_schulveranstaltung": {"type": "string"},
+              "frage3_vorfallsort_freizeit": {"type": "string"},
+              "frage3_vorfallsort_sonstige": {"type": "string"},
+              "frage3_vorfallsort_sonstige_text": {"type": "string"},
+              "frage3_vorfallsart_verkehrsunfall": {"type": "string"},
+              "frage3_vorfallsart_raufhandel": {"type": "string"},
+              "frage3_vorfallsart_arztlicherBehandlungsfehler": {"type": "string"},
+              "frage3_vorfallsart_sportunfall": {"type": "string"},
+              "frage3_vorfallsart_verletzungDurchEinTier": {"type": "string"},
+              "frage3_vorfallsart_glatteissturz": {"type": "string"},
+              "frage3_vorfallsart_gebrauchEinesFehlerhaftenProdukts": {"type": "string"},
+              "frage3_vorfallsart_stromBlitz": {"type": "string"},
+              "frage3_vorfallsart_sonstigerVorfall": {"type": "string"},
+              "frage3_vorfallsart_sonstigerVorfall_text": {"type": "string"}
             }
           },
           "frage4": {
             "type": "object",
             "properties": {
-              "frage4_fremdesVerschulden": { "type": "string", "description": "This field is a Yes/No checkbox. Use string "true" for 'Ja', "false" for 'Nein', empty string if none of them are set" },
-              "frage4_schuldiger":         { "type": "string", "description": "This field represents a free text with the name of the person at fault" },
-            },
-            "required": ["frage4_fremdesVerschulden"]
+              "frage4_fremdesVerschulden": {"type": "string"},
+              "frage4_schuldiger": {"type": "string"}
+            }
           },
           "frage5": {
             "type": "object",
             "properties": {
-              "frage5_schilderungDesEreignisses": { "type": "string", "description": "This field represents a free text description of the event" }
+              "frage5_schilderungDesEreignisses": {"type": "string"}
             }
           },
           "frage6": {
             "type": "object",
             "properties": {
-              "frage6_raufhandelOderAuseinandersetzung": { "type": "string", "description": "This field is a Yes/No checkbox. Use string "true" for 'Ja', "false" for 'Nein', empty string if none of them are set" },
+              "frage6_raufhandelOderAuseinandersetzung": {"type": "string"}
             }
           },
           "frage7": {
-                "type": "object",
-                "properties": {
-                  "frage7_konsumVonAlkoholSuchtgiftMedikamenten": { "type": "string", "description": "This field is a Yes/No checkbox. Use string "true" for 'Ja', "false" for 'Nein', empty string if none of them are set" },
-                  "frage7_artUndMengeDesKonsums":                  { "type": "string", "description": "This field represents a free text description of the type and amount of consumption, e.g. '2 Bier', '3 Gläser Wein', '0,5l Schnaps', '1 Joint', '2 Ecstasy Tabletten'." },
-                  "frage7_zeitraumDesKonsums": {
-                    "type": "string",
-                    "description": "This field must represent a duration (e.g. 'paar Stunden', '30 Minuten', '1 Tag').",
-                    "examples": [
-                      "paar Stunden",
-                      "30 Minuten",
-                      "1 Tag"
-                    ]
-                  }
-                },
-                "required": ["frage7_konsumVonAlkoholSuchtgiftMedikamenten"]
-              },
+            "type": "object",
+            "properties": {
+              "frage7_konsumVonAlkoholSuchtgiftMedikamenten": {"type": "string"},
+              "frage7_artUndMengeDesKonsums": {"type": "string"},
+              "frage7_zeitraumDesKonsums": {"type": "string"}
+            }
+          },
           "frage8": {
             "type": "object",
             "properties": {
-              "frage8_polizeiAufnahme":       { "type": "string", "description": "This field is a Yes/No checkbox. Use string "true" for 'Ja', "false" for 'Nein', empty string if none of them are set" },
-              "frage8_polizeidienststelle":   { "type": "string", "description": "This field represents a free text with the name of the police station" },
-              "frage8_aktenzahl":             { "type": "string", "description": "This field represents a free text with the file number" }
-            },
-            "required": ["frage8_polizeiAufnahme"]
+              "frage8_polizeiAufnahme": {"type": "string"},
+              "frage8_polizeidienststelle": {"type": "string"},
+              "frage8_aktenzahl": {"type": "string"}
+            }
           },
           "frage9": {
             "type": "object",
             "properties": {
-              "frage9_gerichtlichesVerfahrenAnhaengig":    { "type": "string", "description": "This field is a Yes/No checkbox. Use string "true" for 'Ja', "false" for 'Nein', empty string if none of them are set" },
-              "frage9_gerichtOderStaatsanwaltschaft":       { "type": "string", "description": "This field represents a free text with the name of the court or public prosecutor's office" },
-              "frage9_aktenzahl":                          { "type": "string", "description": "This field represents a free text with the file number" }
-            },
-            "required": ["frage9_gerichtlichesVerfahrenAnhaengig"]
-          },
-        },
-        "required": [
-          "frage1","frage2","frage3","frage4","frage5","frage6","frage7",
-          "frage8","frage9"
-        ]
+              "frage9_gerichtlichesVerfahrenAnhaengig": {"type": "string"},
+              "frage9_gerichtOderStaatsanwaltschaft": {"type": "string"},
+              "frage9_aktenzahl": {"type": "string"}
+            }
+          }
+        }
       }
 
-      Return the result as a valid JSON object with the following requirements:
-
-      - Every key must match the schema field names exactly. 
-      - There are two types of checkboxes: single checkboxes (e.g. "Verkehrsunfall") and Yes/No checkboxes, that are always together (e.g. "Fremdes Verschulden: Ja / Nein").
-      - Represent each single checkbox as string "true" if it is set, empty string if not.
-      - For Yes/No checkboxes (Double Checkbox "Ja" und "Nein"), like in a question 6, leave it empty only if none of them are set. Otherwise use "true" or "false".
-      - The checkboxes of both types may be filled with a checkmark, a cross, any other sign or may be fully shaded. The mark may stay near the checkbox, not accurate inside of it. Treat all of them correspondingly as set.
-      - The checkboxes of both types may also be corrected, e.g. a cross over a checkmark. In this case, treat the checkbox as not set and return an empty string.
-      - Represent all other fields (dates, times, free text, numbers, names, etc.) as strings.
-      - Unreadable or empty fields should be returned as `""`.  
-      - Do not add any text outside of the pure JSON output.  
-      - Do not swap or reorder fields; assign them in the same sequence as they appear in the image.
-      - If there a typo in a german word you must fix the typo using given context.
-      - Try to not change the text. However, if the text is not good readable, and it results in meaningless text, you may correct it to the most probable words, so that it makes sense in the given context. For example "Kren tipus reben Praterstern" may be corrected to "Kreuzung neben Praterstern", if the rest of the text suggests that it is a location.
-      - If there are text corrections, like strikethroughs or overwrites, use the final text as it is written last.
-      - If some question with YES/NO checkboxes has the answer "Nein", but there are some fields "Wenn ja" filled that should not be filled in this case, do not ignore them, but return them as they are written in the form. But you are not allowed to change the answer "Nein" to "Ja" in this case.
-      - DO NOT USE EXAMPLES Example 1 to 6 in the output. They are only for your understanding of the required format and how people may fill the form!!!
-      - The document is in GERMAN!
+      Return ONLY the complete JSON object. No explanations. All fields must be strings. Empty or unreadable fields return as "".
     
     user: >
-      Perform OCR on the following document scan and extract all form fields (Frage 1 through Frage 9). Return the result as a valid JSON object according to the specified schema and requirements.
+      Extract all fields from this Vorfallserhebungsbogen form. Use the reference images to understand marking patterns.
 
 # Test Configuration
 "%test":

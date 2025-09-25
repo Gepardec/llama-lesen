@@ -59,27 +59,28 @@ public record VertexAiRequest(
         // Build user message with examples and main image
         List<Content> userContent = new ArrayList<>();
 
-        // Add example introduction if examples exist
+        // Add initial prompt
+        userContent.add(new Content("text", userPrompt));
+
+        // Add main document image FIRST (most important)
+        userContent.add(new Content("image_url",
+                new ImageUrl("data:" + mimeType + ";base64," + mainImage)));
+
+        // Add reference images if they exist
         if (examples != null && !examples.isEmpty()) {
             for (ExampleImage example : examples) {
-                if (example.description() != null) {
+                if (example.description() != null && !example.description().isEmpty()) {
                     userContent.add(new Content("text", example.description()));
                 }
                 userContent.add(new Content("image_url",
                         new ImageUrl("data:" + example.mimeType() + ";base64," + example.base64())));
             }
-
-            userContent.add(new Content("text", "Now, " + userPrompt));
-        } else {
-            userContent.add(new Content("text", userPrompt));
         }
 
-        // Add main document image
-        userContent.add(new Content("image_url",
-                new ImageUrl("data:" + mimeType + ";base64," + mainImage)));
+        // Add final reminder (with correct escaping)
+        userContent.add(new Content("text", "Return only JSON matching the schema. Remember: any mark = true, empty = \"\", Ja/Nein pairs use true/false/\"\"."));
 
         messages.add(new Message("user", userContent));
-
         return messages;
     }
 
