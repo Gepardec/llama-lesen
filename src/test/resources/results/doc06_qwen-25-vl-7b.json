@@ -1,0 +1,55 @@
+{
+  "frage1": {
+    "frage1_datumUhrzeit": "22.07.2023 17:20",
+    "frage1_ortDesEreignisses": "Bahnhof Schönling",
+    "frage1_keinKonkretesEreignis": "",
+    "frage1_artDerErkrankungBeschwerden": ""
+  },
+  "frage2": {
+    "frage2_datumFruehereVerletzung": ""
+  },
+  "frage3": {
+    "frage3_vorfallsort_beruflicheTaetigkeit": "",
+    "frage3_vorfallsort_arbeitsweg": "true",
+    "frage3_vorfallsort_berufskrankheit": "",
+    "frage3_vorfallsort_schulveranstaltung": "",
+    "frage3_vorfallsort_freizeit": "",
+    "frage3_vorfallsort_sonstige": "",
+    "frage3_vorfallsort_sonstige_text": "",
+    "frage3_vorfallsart_verkehrsunfall": "",
+    "frage3_vorfallsart_raufhandel": "",
+    "frage3_vorfallsart_arztlicherBehandlungsfehler": "",
+    "frage3_vorfallsart_sportunfall": "",
+    "frage3_vorfallsart_verletzungDurchEinTier": "",
+    "frage3_vorfallsart_glatteissturz": "",
+    "frage3_vorfallsart_gebrauchEinesFehlerhaftenProdukts": "",
+    "frage3_vorfallsart_stromBlitz": "",
+    "frage3_vorfallsart_sonstigerVorfall": "",
+    "frage3_vorfallsart_sonstigerVorfall_text": ""
+  },
+  "frage4": {
+    "frage4_fremdesVerschulden": "true",
+    "frage4_schuldiger": "Max Hundebegleiter"
+  },
+  "frage5": {
+    "frage5_schilderungDesEreignisses": "Als ich am Bahnhof aus dem Zug ausstieg, sprang mir ein schwerer Hund aus und biss mir Bernali die Haut ab."
+  },
+  "frage6": {
+    "frage6_raufhandelOderAuseinandersetzung": "false"
+  },
+  "frage7": {
+    "frage7_konsumVonAlkoholSuchtgiftMedikamenten": "true",
+    "frage7_artUndMengeDesKonsums": "2 Bier",
+    "frage7_zeitraumDesKonsums": "Vor 3 Tagen"
+  },
+  "frage8": {
+    "frage8_polizeiAufnahme": "true",
+    "frage8_polizeidienststelle": "Schönling",
+    "frage8_aktenzahl": "4327+42"
+  },
+  "frage9": {
+    "frage9_gerichtlichesVerfahrenAnhaengig": "true",
+    "frage9_gerichtOderStaatsanwaltschaft": "Bezirksgericht",
+    "frage9_aktenzahl": "ABCDEXAV"
+  }
+}
