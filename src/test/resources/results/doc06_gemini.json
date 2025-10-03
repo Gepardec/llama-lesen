@@ -1,0 +1,55 @@
+{
+  "frage1": {
+    "frage1_datumUhrzeit": "22. Juli 2023 17:20",
+    "frage1_ortDesEreignisses": "Bahnhof\nLinz",
+    "frage1_keinKonkretesEreignis": "",
+    "frage1_artDerErkrankungBeschwerden": ""
+  },
+  "frage2": {
+    "frage2_datumFruehereVerletzung": ""
+  },
+  "frage3": {
+    "frage3_vorfallsort_beruflicheTaetigkeit": "true",
+    "frage3_vorfallsort_arbeitsweg": "",
+    "frage3_vorfallsort_berufskrankheit": "",
+    "frage3_vorfallsort_schulveranstaltung": "",
+    "frage3_vorfallsort_freizeit": "",
+    "frage3_vorfallsort_sonstige": "",
+    "frage3_vorfallsort_sonstige_text": "",
+    "frage3_vorfallsart_verkehrsunfall": "",
+    "frage3_vorfallsart_raufhandel": "",
+    "frage3_vorfallsart_arztlicherBehandlungsfehler": "",
+    "frage3_vorfallsart_sportunfall": "",
+    "frage3_vorfallsart_verletzungDurchEinTier": "true",
+    "frage3_vorfallsart_glatteissturz": "",
+    "frage3_vorfallsart_gebrauchEinesFehlerhaftenProdukts": "",
+    "frage3_vorfallsart_stromBlitz": "",
+    "frage3_vorfallsart_sonstigerVorfall": "",
+    "frage3_vorfallsart_sonstigerVorfall_text": ""
+  },
+  "frage4": {
+    "frage4_fremdesVerschulden": "true",
+    "frage4_schuldiger": "Hundebesitzer"
+  },
+  "frage5": {
+    "frage5_schilderungDesEreignisses": "Als ich am Bahnhof aus dem Zug ausgestiegen bin, hat mich ein großer Hund angesprungen und mir beinahe die Hand abgebissen."
+  },
+  "frage6": {
+    "frage6_raufhandelOderAuseinandersetzung": "false"
+  },
+  "frage7": {
+    "frage7_konsumVonAlkoholSuchtgiftMedikamenten": "true",
+    "frage7_artUndMengeDesKonsums": "2 Bier",
+    "frage7_zeitraumDesKonsums": "innerhalb 2 Stunden"
+  },
+  "frage8": {
+    "frage8_polizeiAufnahme": "true",
+    "frage8_polizeidienststelle": "Schörfling",
+    "frage8_aktenzahl": "123456/72"
+  },
+  "frage9": {
+    "frage9_gerichtlichesVerfahrenAnhaengig": "true",
+    "frage9_gerichtOderStaatsanwaltschaft": "Bezirksgericht",
+    "frage9_aktenzahl": "ABCDEF/A1"
+  }
+}

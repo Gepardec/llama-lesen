@@ -181,7 +181,7 @@ llm:
       Return ONLY the complete JSON object. No explanations. All fields must be strings. Empty or unreadable fields return as "".
     
     user: >
-      Extract all fields from this Vorfallserhebungsbogen form. Use the reference images to understand marking patterns.
+      Extract all fields from this Vorfallserhebungsbogen form. Try to leave text not changed, as it was written by user. Correct only obvious mistakes.
 
 # Test Configuration
 "%test":
