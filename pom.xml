@@ -17,6 +17,7 @@
         <quarkus.platform.version>3.26.2</quarkus.platform.version>
         <skipITs>true</skipITs>
         <surefire-plugin.version>3.5.3</surefire-plugin.version>
+        <apache.text.version>1.14.0</apache.text.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -101,6 +102,11 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-test-h2</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>${apache.text.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.auth</groupId>

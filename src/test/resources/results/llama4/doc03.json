@@ -1,0 +1,55 @@
+{
+  "frage1": {
+    "frage1_datumUhrzeit": "13.06.2015 13:56",
+    "frage1_ortDesEreignisses": "Alpres - Hermann - Str. 10 4803 Attnang - Puchheim",
+    "frage1_keinKonkretesEreignis": "",
+    "frage1_artDerErkrankungBeschwerden": "Sturz auf die Knie"
+  },
+  "frage2": {
+    "frage2_datumFruehereVerletzung": ""
+  },
+  "frage3": {
+    "frage3_vorfallsort_beruflicheTaetigkeit": "",
+    "frage3_vorfallsort_arbeitsweg": "",
+    "frage3_vorfallsort_berufskrankheit": "",
+    "frage3_vorfallsort_schulveranstaltung": "",
+    "frage3_vorfallsort_freizeit": "true",
+    "frage3_vorfallsort_sonstige": "",
+    "frage3_vorfallsort_sonstige_text": "",
+    "frage3_vorfallsart_verkehrsunfall": "",
+    "frage3_vorfallsart_raufhandel": "",
+    "frage3_vorfallsart_arztlicherBehandlungsfehler": "",
+    "frage3_vorfallsart_sportunfall": "",
+    "frage3_vorfallsart_verletzungDurchEinTier": "true",
+    "frage3_vorfallsart_glatteissturz": "",
+    "frage3_vorfallsart_gebrauchEinesFehlerhaftenProdukts": "",
+    "frage3_vorfallsart_stromBlitz": "",
+    "frage3_vorfallsart_sonstigerVorfall": "",
+    "frage3_vorfallsart_sonstigerVorfall_text": ""
+  },
+  "frage4": {
+    "frage4_fremdesVerschulden": "true",
+    "frage4_schuldiger": "Nils Ortner"
+  },
+  "frage5": {
+    "frage5_schilderungDesEreignisses": "Bin über meine Kote gestolpert, nach dem Milch die Hilfe mich gebrochen hat"
+  },
+  "frage6": {
+    "frage6_raufhandelOderAuseinandersetzung": "false"
+  },
+  "frage7": {
+    "frage7_konsumVonAlkoholSuchtgiftMedikamenten": "false",
+    "frage7_artUndMengeDesKonsums": "",
+    "frage7_zeitraumDesKonsums": ""
+  },
+  "frage8": {
+    "frage8_polizeiAufnahme": "false",
+    "frage8_polizeidienststelle": "",
+    "frage8_aktenzahl": ""
+  },
+  "frage9": {
+    "frage9_gerichtlichesVerfahrenAnhaengig": "false",
+    "frage9_gerichtOderStaatsanwaltschaft": "",
+    "frage9_aktenzahl": ""
+  }
+}

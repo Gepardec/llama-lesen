@@ -1,0 +1,55 @@
+{
+  "frage1": {
+    "frage1_datumUhrzeit": "1. Dez 2025 ca. 17 Uhr",
+    "frage1_ortDesEreignisses": "Göthestraße 5-7 4020 Linz",
+    "frage1_keinKonkretesEreignis": "",
+    "frage1_artDerErkrankungBeschwerden": ""
+  },
+  "frage2": {
+    "frage2_datumFruehereVerletzung": ""
+  },
+  "frage3": {
+    "frage3_vorfallsort_beruflicheTaetigkeit": "",
+    "frage3_vorfallsort_arbeitsweg": "",
+    "frage3_vorfallsort_berufskrankheit": "",
+    "frage3_vorfallsort_schulveranstaltung": "",
+    "frage3_vorfallsort_freizeit": "true",
+    "frage3_vorfallsort_sonstige": "",
+    "frage3_vorfallsort_sonstige_text": "",
+    "frage3_vorfallsart_verkehrsunfall": "",
+    "frage3_vorfallsart_raufhandel": "",
+    "frage3_vorfallsart_arztlicherBehandlungsfehler": "",
+    "frage3_vorfallsart_sportunfall": "",
+    "frage3_vorfallsart_verletzungDurchEinTier": "",
+    "frage3_vorfallsart_glatteissturz": "true",
+    "frage3_vorfallsart_gebrauchEinesFehlerhaftenProdukts": "true",
+    "frage3_vorfallsart_stromBlitz": "",
+    "frage3_vorfallsart_sonstigerVorfall": "",
+    "frage3_vorfallsart_sonstigerVorfall_text": ""
+  },
+  "frage4": {
+    "frage4_fremdesVerschulden": "true",
+    "frage4_schuldiger": "Der Hausmeister"
+  },
+  "frage5": {
+    "frage5_schilderungDesEreignisses": "Bin aus der Haustüre gegangen und dann am Gehsteig ausgerutscht, bin nicht verletzt worden"
+  },
+  "frage6": {
+    "frage6_raufhandelOderAuseinandersetzung": "false"
+  },
+  "frage7": {
+    "frage7_konsumVonAlkoholSuchtgiftMedikamenten": "false",
+    "frage7_artUndMengeDesKonsums": "",
+    "frage7_zeitraumDesKonsums": ""
+  },
+  "frage8": {
+    "frage8_polizeiAufnahme": "false",
+    "frage8_polizeidienststelle": "",
+    "frage8_aktenzahl": ""
+  },
+  "frage9": {
+    "frage9_gerichtlichesVerfahrenAnhaengig": "false",
+    "frage9_gerichtOderStaatsanwaltschaft": "",
+    "frage9_aktenzahl": ""
+  }
+}

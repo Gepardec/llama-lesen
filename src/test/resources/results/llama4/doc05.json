@@ -1,0 +1,55 @@
+{
+  "frage1": {
+    "frage1_datumUhrzeit": "10.9.2024 12 Uhr",
+    "frage1_ortDesEreignisses": "4620 Linz Europlatz 4",
+    "frage1_keinKonkretesEreignis": "",
+    "frage1_artDerErkrankungBeschwerden": "Verzerrter Fuß"
+  },
+  "frage2": {
+    "frage2_datumFruehereVerletzung": ""
+  },
+  "frage3": {
+    "frage3_vorfallsort_beruflicheTaetigkeit": "",
+    "frage3_vorfallsort_arbeitsweg": "true",
+    "frage3_vorfallsort_berufskrankheit": "",
+    "frage3_vorfallsort_schulveranstaltung": "",
+    "frage3_vorfallsort_freizeit": "",
+    "frage3_vorfallsort_sonstige": "",
+    "frage3_vorfallsort_sonstige_text": "",
+    "frage3_vorfallsart_verkehrsunfall": "true",
+    "frage3_vorfallsart_raufhandel": "",
+    "frage3_vorfallsart_arztlicherBehandlungsfehler": "",
+    "frage3_vorfallsart_sportunfall": "",
+    "frage3_vorfallsart_verletzungDurchEinTier": "",
+    "frage3_vorfallsart_glatteissturz": "",
+    "frage3_vorfallsart_gebrauchEinesFehlerhaftenProdukts": "",
+    "frage3_vorfallsart_stromBlitz": "",
+    "frage3_vorfallsart_sonstigerVorfall": "",
+    "frage3_vorfallsart_sonstigerVorfall_text": ""
+  },
+  "frage4": {
+    "frage4_fremdesVerschulden": "true",
+    "frage4_schuldiger": "Besitzer eines weißen Golf"
+  },
+  "frage5": {
+    "frage5_schilderungDesEreignisses": "Nach dem Verlassen des Fahrzeuges fühlte ein weißer Golf mit erhöhter Geschwindigkeit vor mir Auto vorbei und über meine Füßigkeit"
+  },
+  "frage6": {
+    "frage6_raufhandelOderAuseinandersetzung": "false"
+  },
+  "frage7": {
+    "frage7_konsumVonAlkoholSuchtgiftMedikamenten": "false",
+    "frage7_artUndMengeDesKonsums": "",
+    "frage7_zeitraumDesKonsums": ""
+  },
+  "frage8": {
+    "frage8_polizeiAufnahme": "false",
+    "frage8_polizeidienststelle": "",
+    "frage8_aktenzahl": ""
+  },
+  "frage9": {
+    "frage9_gerichtlichesVerfahrenAnhaengig": "false",
+    "frage9_gerichtOderStaatsanwaltschaft": "",
+    "frage9_aktenzahl": ""
+  }
+}
